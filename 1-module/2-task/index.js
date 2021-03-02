@@ -7,7 +7,7 @@ function print(text) {
 
 
 function isValid(name) {
-  return name != null && name.length >= 4 && (name.indexOf(' ')==-1) || false;
+  return name != null && name.length >= 4 && !name.includes(' ')
 }
 
 function sayHello() {

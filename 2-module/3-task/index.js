@@ -1,4 +1,6 @@
 let calculator = {
+  firstOperand: null,
+  secondOperand: null,
   read(firstOperand,secondOperand){
     this.firstOperand = firstOperand;
     this.secondOperand = secondOperand;

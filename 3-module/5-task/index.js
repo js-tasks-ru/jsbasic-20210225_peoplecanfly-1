@@ -1,6 +1,7 @@
 function getMinMax(inputArray){
-  inpitArray = inputArray.split(',').join(' ').split(' ')
-    .filter(word => isFinite(word) && word != ''? word: null ); 
-  return  { min: Math.min(...inpitArray), max: Math.max(...inpitArray) }
+  let numbersOnly = inputArray.split(',').join(' ').split(' ')
+    .filter(word => word !== '' && isFinite(word));
+
+  return  { min: Math.min(...numbersOnly), max: Math.max(...numbersOnly) }
 }
 

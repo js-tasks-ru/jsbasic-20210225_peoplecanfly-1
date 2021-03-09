@@ -1,3 +1,3 @@
 function filterRange(arr, a, b) {
-  // ваш код...
+   return arr.filter(arr_item => arr_item >= a && arr_item <= b )
 }

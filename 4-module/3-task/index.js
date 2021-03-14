@@ -1,30 +1,44 @@
 function highlight(table) {
- [...table.querySelectorAll('tr')].splice(1)
- .forEach(ApplyStylesForRow) 
- // получаем все строки не включая шапку и проходимся методом forEach по каждой строке
+ [...table.querySelectorAll('tr')]
+ .forEach((row,index) => {
+    if (index===0){
+      return;
+    } 
+    applyStylesForRow(row)
+ })
 }
+ 
 
 
-//  в каждой строке проходим по каждой ячейке. Так как у каждой ячейки свои проверки получается вот такая...
-let ApplyStylesForRow = (row) => {
-//  проверка на возраст
-  if (+row.cells[1].innerText < 18){
-    row.cells[1].parentElement.style.textDecoration = 'line-through'
-  } 
+//  в каждой строке проходим по каждой ячейке. Так как у каждой ячейки свои проверки.
+const applyStylesForRow = (row) => {
 
-  //  Проверка на возраст
-  if (row.cells[2].innerText == 'm'){
-    row.cells[2].parentElement.className = 'male'
-  } else if (row.cells[2].innerText== 'f'){
-    row.cells[2].parentElement.className = 'female'
+  const addLineThroughIfNeeded = row =>{
+    if (+row.cells[1].innerText < 18){
+      row.style.textDecoration = 'line-through'
+    }
   }
-  // проверка наличия dataset 
-  if (row.cells[3].dataset.available == 'true'){
-    row.cells[3].parentElement.className += ' available'
-  } else if (row.cells[3].dataset.available == 'false'){
-    row.cells[3].parentElement.className +=' unavailable'
-  }else{
-    return  row.cells[3].parentElement.hidden = true;
-  } 
+  
+  const addAgeClassIfNeeded = row => {
+    if (row.cells[2].innerText == 'm'){
+      row.classList.add('male');
+    } else if (row.cells[2].innerText== 'f'){
+      row.classList.add('female')
+    }
+  }
+  
+  const addAvailableStatusClassIfNeeded = row => {
+    if (row.cells[3].dataset.available == 'true'){
+      row.classList.add('available')
+    }else if (row.cells[3].dataset.available == 'false'){
+      row.classList.add('unavailable')
+    }else {
+      row.hidden = true;
+    }
+  }
+
+  addLineThroughIfNeeded(row);
+  addAgeClassIfNeeded(row);
+  addAvailableStatusClassIfNeeded(row);
 }
 

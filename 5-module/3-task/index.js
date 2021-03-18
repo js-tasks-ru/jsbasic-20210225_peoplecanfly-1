@@ -4,24 +4,39 @@ function initCarousel() {
   const rightButton = document.querySelector(".carousel__arrow_right");
   const carouselInner = document.querySelector(".carousel__inner");
 
-  // мы уже находимся в крайнем левом положении, по этому кнопку надо сразу скрыть.
-  // Если можно было бы модфицировать верстку я бы выставил по центру тогда бы не надо было кнопку скрывтать.
-  rightButton.style.display = "none";
+  leftButton.style.display = "none";
 
-  let sliderMove = function () {
-    // подумал так лучше что бы через this что бы общая функция для обоих кнопок была.
-    this.classList.contains("carousel__arrow_left")
-      ? iterationQty++
-      : iterationQty--;
+  function moveSlide() {
     carouselInner.style.transform = `translateX(-${carouselInner.offsetWidth * iterationQty}px)`;
-    iterationQty == 3
-      ? (leftButton.style.display = "none")
-      : (leftButton.style.display = "");
-    iterationQty == 0
-      ? (rightButton.style.display = "none")
-      : (rightButton.style.display = "");
-  };
+  }
 
-  leftButton.addEventListener("click", sliderMove);
-  rightButton.addEventListener("click", sliderMove);
+  function setButtonVisibility() {
+    if (iterationQty == 3) {
+      rightButton.style.display = "none";
+    } else{
+      rightButton.style.display = "";
+    }
+     
+    if (iterationQty == 0) {
+      leftButton.style.display = "none";
+    } else {
+      leftButton.style.display = "";
+    }
+  }
+
+  function toMoveSlider() {
+    if (this.classList.contains("carousel__arrow_right")) {
+      iterationQty++;
+      moveSlide();
+      setButtonVisibility();
+    } else {
+      iterationQty--;
+      moveSlide();
+      setButtonVisibility();
+    }
+  }
+
+  leftButton.addEventListener("click", toMoveSlider);
+  rightButton.addEventListener("click", toMoveSlider);
 }
+

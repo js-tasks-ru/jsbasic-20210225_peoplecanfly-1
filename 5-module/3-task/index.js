@@ -7,7 +7,7 @@ function initCarousel() {
   leftButton.style.display = "none";
 
   function moveSlide() {
-    carouselInner.style.transform = `translateX(-${carouselInner.offsetWidth * iterationQty}px)`;
+    carouselInner.style.transform = `translateX(${-carouselInner.offsetWidth * iterationQty}px)`;
   }
 
   function setButtonVisibility() {

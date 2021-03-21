@@ -30,11 +30,13 @@ export default class ProductCard {
     </div>`;
   }
 
-  #addCustomEvent(button){
-    let event = new CustomEvent("product-add", { // имя события должно быть именно "product-add"
-    detail: this.product.id, // Уникальный идентификатора товара из объекта товара
-    bubbles: true // это событие всплывает - это понадобится в дальнейшем
-    })
-    button.dispatchEvent(event);
+  #addCustomEvent(button){ 
+    button.dispatchEvent(new CustomEvent("product-add", { 
+    detail: this.product.id, 
+    bubbles: true 
+    }))
+
+    button.addEventListener("product-add", console.log(this.id)); // тут не понимаю прям совсем...
+  
   }
 }

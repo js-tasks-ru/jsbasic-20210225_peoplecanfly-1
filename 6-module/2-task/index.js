@@ -1,6 +1,7 @@
 import createElement from "../../assets/lib/create-element.js";
 
 export default class ProductCard {
+  
   constructor(product) {
     this.product = product;
     this.elem = document.createElement("div");
@@ -30,13 +31,19 @@ export default class ProductCard {
     </div>`;
   }
 
-  #addCustomEvent(button){ 
-    button.dispatchEvent(new CustomEvent("product-add", { 
-    detail: this.product.id, 
-    bubbles: true 
-    }))
 
-    button.addEventListener("product-add", console.log(this.id)); // тут не понимаю прям совсем...
-  
+// тотальная кривизна тут наверно, но я с пользователскими ивентами долго разибирался, смог только так   
+  #addCustomEvent(button) {
+    // пришлось оборачивать в функцию так как не понял как можно это вызвать иначе в addEventListner
+    function createCustomEvent() {
+      const productIdDispatch = new CustomEvent("product-add", {
+        detail: this.product.id,
+        bubbles: true
+      });
+      button.dispatchEvent(productIdDispatch); // активация события ( я так это понял )
+    }
+
+    createCustomEvent = createCustomEvent.bind(this); // this будет button если не использовать bind
+    button.addEventListener("click", createCustomEvent); // тут уже просто вешаю обработчик 
   }
 }

@@ -21,11 +21,7 @@ export default class UserTable {
   }
 
   #rowsTableTemplate(users) {
-    let resultTemplate = "";
-    for (let user of users) {
-      resultTemplate += this.#rowTemplateCreation(user);
-    }
-    return resultTemplate;
+    return users.map((user) => this.#rowTemplateCreation(user)).join('');
   }
 
   #userTableTemplate({ users }) {

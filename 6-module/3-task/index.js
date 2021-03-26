@@ -4,6 +4,7 @@ export default class Carousel {
   constructor(slides) {
     this.slides = slides;
     this.elem = document.createElement("div");
+    this.data = null;
     this.#render();
   }
 
@@ -24,78 +25,76 @@ export default class Carousel {
   }
 
   #makeSlidesLayout({ products }) {
-    let allSlidesTemplate = "";
-    for (let product of products) {
-      allSlidesTemplate += this.#makeSlideLayout(product);
-    }
-    return allSlidesTemplate;
+    return products.map((product) => this.#makeSlideLayout(product)).join("");
   }
 
-  #moveSlide() {
-    const slider = this.elem;
-    const maxlength = this.slides.length - 1;
-    let iterationQty = 0;
-    const leftButton = slider.querySelector(".carousel__arrow_left");
-    const rightButton = slider.querySelector(".carousel__arrow_right");
-    const carouselInner = slider.querySelector(".carousel__inner");
+  #initalizeSlider = () => {
+    this.data = {
+      maxlength: this.slides.length - 1,
+      iterationQty: 0,
+      leftButton: this.elem.querySelector(".carousel__arrow_left"),
+      rightButton: this.elem.querySelector(".carousel__arrow_right"),
+      carouselInner: this.elem.querySelector(".carousel__inner"),
+    };
+  };
 
-    leftButton.style.display = "none";
+  #moveSingleSlide(){
+  this.data.iterationQty++;
+  this.data.carouselInner.style.transform = `translateX(${-this.data.carouselInner.offsetWidth * this.data.iterationQty}px`;
+  }
 
-    function moveSlide() {
-      carouselInner.style.transform = `translateX(${
-        -carouselInner.offsetWidth * iterationQty
-      }px`;
+  #moveSlider = (event) => {
+    if (
+      event.target
+        .closest(".carousel__arrow")
+        .classList.contains("carousel__arrow_right")
+    ) {
+      this.#moveSingleSlide();
+      this.#setButtonVisibility();
+    } else {
+      this.#moveSingleSlide();
+      this.#setButtonVisibility();
     }
+  };
 
-    function setButtonVisibility() {
-      if (iterationQty == maxlength) {
-        rightButton.style.display = "none";
-      } else {
-        rightButton.style.display = "";
-      }
-
-      if (iterationQty == 0) {
-        leftButton.style.display = "none";
-      } else {
-        leftButton.style.display = "";
-      }
+  #setButtonVisibility = () => {
+    if (this.data.iterationQty == this.data.maxlength) {
+      this.data.rightButton.style.display = "none";
+    } else {
+      this.data.rightButton.style.display = "";
     }
-
-    function toMoveSlider() {
-      if (this.classList.contains("carousel__arrow_right")) {
-        iterationQty++;
-        moveSlide();
-        setButtonVisibility();
-      } else {
-        iterationQty--;
-        moveSlide();
-        setButtonVisibility();
-      }
+    console.log(this.data.iterationQty);
+    if (this.data.iterationQty == 0) {
+      this.data.leftButton.style.display = "none";
+    } else {
+      this.data.leftButton.style.display = "";
     }
+  };
 
-    leftButton.addEventListener("click", toMoveSlider);
-    rightButton.addEventListener("click", toMoveSlider);
+  #activateSlider() {
+    this.data.leftButton.style.display = "none";
+    this.data.leftButton.addEventListener("click", this.#moveSlider);
+    this.data.rightButton.addEventListener("click", this.#moveSlider);
   }
 
   #addCustomListener() {
     const buttons = this.elem.querySelectorAll(".carousel__button");
-    
-    const dsipatchCustomerEvent = (event) => {
-      let slide = {id: null}
-      slide.id = event.target.closest(".carousel__slide").dataset.id;
-      
-      this.elem.dispatchEvent(new CustomEvent("product-add", {
-        detail: slide.id,
-        bubbles: true,
-      }));
-      
-      console.log(slide.id)
-    };
-
     for (let button of buttons) {
-      button.addEventListener("click", dsipatchCustomerEvent);
+      button.addEventListener("click", this.#dsipatchCustomerEvent);
     }
   }
+
+  #dsipatchCustomerEvent = (event) => {
+    let slide = { id: null };
+    slide.id = event.target.closest(".carousel__slide").dataset.id;
+
+    this.elem.dispatchEvent(
+      new CustomEvent("product-add", {
+        detail: slide.id,
+        bubbles: true,
+      })
+    );
+  };
 
   //  ************** Основная функция создания  карусели с полным функционалом ************
   #render() {
@@ -112,9 +111,10 @@ export default class Carousel {
     </div>
     `;
     // Добавляем разметку в корневой элемент который и будет рендерится на странице.
+    
     this.elem.insertAdjacentHTML("afterbegin", template);
-
-    this.#moveSlide(); // Добавляем возможность двигать слайдер
+    this.#initalizeSlider();
+    this.#activateSlider(); // Добавляем возможность двигать слайдер
     this.#addCustomListener(); // Добавляем listener  для кнопок добавления в корзину
   }
 }

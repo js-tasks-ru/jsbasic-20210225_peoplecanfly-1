@@ -1,10 +1,12 @@
 import createElement from "../../assets/lib/create-element.js";
 
 export default class Carousel {
+  #sliderData = null;
+  #slides = null;
+
   constructor(slides) {
-    this.slides = slides;
+    this.#slides = slides;
     this.elem = null;
-    this.sliderData = null;
     this.#render();
   }
 
@@ -29,8 +31,8 @@ export default class Carousel {
   }
 
   #initalizeSlider = () => {
-    this.sliderData = {
-      maxlength: this.slides.length - 1,
+    this.#sliderData = {
+      maxlength: this.#slides.length - 1,
       iterationQty: 0,
       leftButton: this.elem.querySelector(".carousel__arrow_left"),
       rightButton: this.elem.querySelector(".carousel__arrow_right"),
@@ -39,69 +41,62 @@ export default class Carousel {
   };
 
   #moveSingleSlide() {
-    
-    this.sliderData.carouselInner.style.transform = `translateX(${
-      -this.sliderData.carouselInner.offsetWidth * this.sliderData.iterationQty
+    this.#sliderData.carouselInner.style.transform = `translateX(${
+      -this.#sliderData.carouselInner.offsetWidth * this.#sliderData.iterationQty
     }px`;
   }
 
   #moveSlider = (event) => {
-    if (
-      event.target
-        .closest(".carousel__arrow")
-        .classList.contains("carousel__arrow_right")
-    ) {
-      this.sliderData.iterationQty++;
+    if (event.target.closest(".carousel__arrow_right")) {
+      this.#sliderData.iterationQty++;
       this.#moveSingleSlide();
       this.#setButtonVisibility();
     } else {
-      this.sliderData.iterationQty--;
+      this.#sliderData.iterationQty--;
       this.#moveSingleSlide();
       this.#setButtonVisibility();
     }
   };
 
   #setButtonVisibility = () => {
-    if (this.sliderData.iterationQty == this.sliderData.maxlength) {
-      this.sliderData.rightButton.style.display = "none";
+    if (this.#sliderData.iterationQty == this.#sliderData.maxlength) {
+      this.#sliderData.rightButton.style.display = "none";
     } else {
-      this.sliderData.rightButton.style.display = "";
+      this.#sliderData.rightButton.style.display = "";
     }
-    if (this.sliderData.iterationQty == 0) {
-      this.sliderData.leftButton.style.display = "none";
+    if (this.#sliderData.iterationQty == 0) {
+      this.#sliderData.leftButton.style.display = "none";
     } else {
-      this.sliderData.leftButton.style.display = "";
+      this.#sliderData.leftButton.style.display = "";
     }
   };
 
   #activateSlider() {
-    this.sliderData.leftButton.style.display = "none";
-    this.sliderData.leftButton.addEventListener("click", this.#moveSlider);
-    this.sliderData.rightButton.addEventListener("click", this.#moveSlider);
+    this.#sliderData.leftButton.style.display = "none";
+    this.#sliderData.leftButton.addEventListener("click", this.#moveSlider);
+    this.#sliderData.rightButton.addEventListener("click", this.#moveSlider);
   }
 
   #addCustomListener() {
-    const buttons = this.elem.querySelectorAll(".carousel__button");
-    for (let button of buttons) {
-      button.addEventListener("click", this.#dsipatchCustomerEvent);
-    }
+    this.elem.addEventListener("click", this.#dsipatchCustomerEvent);
   }
 
   #dsipatchCustomerEvent = (event) => {
-    let slide = { id: null };
-    slide.id = event.target.closest(".carousel__slide").dataset.id;
+    if (event.target.closest(".carousel__button")) {
+      const slideId = event.target.closest(".carousel__slide").dataset.id;
 
-    this.elem.dispatchEvent(
-      new CustomEvent("product-add", {
-        detail: slide.id,
-        bubbles: true,
-      })
-    );
+      this.elem.dispatchEvent(
+        new CustomEvent("product-add", {
+          detail: slideId,
+          bubbles: true,
+        })
+      );
+    }
   };
 
   //  ************** Основная функция создания  карусели с полным функционалом ************
   #render() {
-   this.elem = createElement(`
+    this.elem = createElement(`
    <div class="carousel">
     <div class="carousel__arrow carousel__arrow_right">
       <img src="/assets/images/icons/angle-icon.svg" alt="icon">
@@ -110,7 +105,7 @@ export default class Carousel {
       <img src="/assets/images/icons/angle-left-icon.svg" alt="icon">
     </div>
     <div class="carousel__inner">
-      ${this.#makeSlidesLayout({ products: this.slides })}
+      ${this.#makeSlidesLayout({ products: this.#slides })}
     </div>
    </div>`);
     // Добавляем разметку в корневой элемент который и будет рендерится на странице.

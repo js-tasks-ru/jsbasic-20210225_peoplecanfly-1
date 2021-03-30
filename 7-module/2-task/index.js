@@ -5,27 +5,30 @@ export default class Modal {
     this.body = null;
     this.title = null;
     this.documentBody = document.querySelector("body");
+    this.elem = createElement(this.getTemplate);
   }
 
   setTitle(title) {
-    this.title = title;
+    this.elem.querySelector(".modal__title").innerHTML = title;
   }
 
   setBody(element) {
-    this.body = element.outerHTML;
+    this.elem.querySelector(".modal__body").appendChild(element);
   }
 
   open() {
-    this.documentBody.classList.add("modal-open");
+    this.documentBody.classList.add("is-modal-open");
 
-    let temlate = this.getTemplate();
-    this.documentBody.appendChild(createElement(temlate));
+    this.documentBody.appendChild(this.elem);
     this.#addlisteners();
   }
 
   close() {
-    this.documentBody.classList.remove("modal-open");
-    this.documentBody.querySelector(".modal").remove();
+    this.documentBody.classList.remove("is-modal-open");
+    if (this.documentBody.querySelector(".modal")) {
+      this.documentBody.querySelector(".modal").remove;
+    }
+    
   }
 
   getTemplate = () => {
@@ -39,14 +42,10 @@ export default class Modal {
         <button type="button" class="modal__close">
           <img src="/assets/images/icons/cross-icon.svg" alt="close-icon" />
         </button>
-
         <h3 class="modal__title">
-          ${this.title}
         </h3>
       </div>
-
       <div class="modal__body">
-        ${this.body}
       </div>
     </div>
   </div>`;
@@ -60,12 +59,11 @@ export default class Modal {
       this.documentBody.classList.remove("modal-open");
     });
 
-    this.documentBody.addEventListener('keydown', (event)=>{
-      if(event.code ==='Escape'){
+    this.documentBody.addEventListener("keydown", (event) => {
+      if (event.code === "Escape") {
         this.documentBody.querySelector(".modal").remove();
         this.documentBody.classList.remove("modal-open");
       }
-    })
-
+    });
   };
 }

@@ -20,7 +20,7 @@ export default class RibbonMenu {
         </button>
 
         <nav class="ribbon__inner">
-          ${this.#GetRibbonItemList()}
+          ${this.#getRibbonItemList()}
         </nav>
 
         <button class="ribbon__arrow ribbon__arrow_right">
@@ -28,14 +28,14 @@ export default class RibbonMenu {
         </button>
       </div>`);
 
-    this.#RibbonMoveElementsInit();
-    this.#moveRibbonMenu();
-    this.elem.addEventListener("click", this.#removeDefault); // лучше так или вызывать функцию внутри которыой уже будет прослушка события ? 
-    this.elem.addEventListener("click", this.#elementsStyleControl);
+    this.#ribbonMoveElementsInit();
+    this.#onClickRibbonMove();
+    this.#removeDefaulbehavior();
+    this.#elementsStyleControl();
     this.#addCustomListener();
   }
 
-  #RibbonMoveElementsInit() {
+  #ribbonMoveElementsInit() {
     this.#rightButton = this.elem.querySelector(".ribbon__arrow_right");
     this.#leftButton = this.elem.querySelector(".ribbon__arrow_left");
     this.#ribbonInner = this.elem.querySelector(".ribbon__inner");
@@ -43,7 +43,7 @@ export default class RibbonMenu {
     this.#rightButton.classList.add("ribbon__arrow_visible");
   }
 
-  #GetRibbonItemList() {
+  #getRibbonItemList() {
     return this.#categories.map((item) => this.#getRibbonItem(item)).join("");
   }
 
@@ -51,7 +51,7 @@ export default class RibbonMenu {
     return `<a href="#" class="ribbon__item" data-id="${item.id}">${item.name}</a>`;
   }
 
-  #moveRibbonMenu() {
+  #onClickRibbonMove() {
     this.#rightButton.addEventListener("click", () =>
       this.#ribbonInner.scrollBy(350, 0)
     );
@@ -80,22 +80,21 @@ export default class RibbonMenu {
     }
   };
 
-  #removeDefault = (event) => {
-    if (event.target.tagName == "A") {
-      event.preventDefault();
-    }
-  };
+  #elementsStyleControl = () => {
+    this.elem.addEventListener('click', (event)=>{
+       if (!event.target.classList.contains("ribbon__item")) {
+         return;
+       }
 
-  #elementsStyleControl = (event) => {
-    if (event.target.classList.contains("ribbon__item")) {
-      let ribbonElement = this.#ribbonInner.querySelector(".ribbon__item_active");
-      // Не стал писать отдельную функцию для этого, а вынести этот IF от сюда нельзя так как тогда, при прокрутке слайдреа стили будут слетать. 
-      if (ribbonElement) {
-        ribbonElement.classList.remove("ribbon__item_active");
-      }
-      
-      event.target.classList.add("ribbon__item_active");
-    }
+       let ribbonElement = this.#ribbonInner.querySelector(
+         ".ribbon__item_active"
+       );
+       if (ribbonElement) {
+         ribbonElement.classList.remove("ribbon__item_active");
+       }
+
+       event.target.classList.add("ribbon__item_active");
+    } )
   };
 
   #addCustomListener() {
@@ -106,12 +105,20 @@ export default class RibbonMenu {
     if (event.target.classList.contains("ribbon__item")) {
       const ribbonItemId = event.target.dataset.id;
 
-      this.elem.dispatchEvent (
-        new CustomEvent('ribbon-select', { 
-        detail: ribbonItemId, 
-        bubbles: true 
+      this.elem.dispatchEvent(
+        new CustomEvent("ribbon-select", {
+          detail: ribbonItemId,
+          bubbles: true,
         })
-      )
+      );
     }
+  };
+
+  #removeDefaulbehavior = () => {
+    this.elem.addEventListener("click", (event) => {
+      if (event.target.tagName == "A") {
+        event.preventDefault();
+      }
+    });
   };
 }

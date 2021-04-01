@@ -1,34 +1,32 @@
 import createElement from "../../assets/lib/create-element.js";
 
 export default class Modal {
+  #documentBody = null;
+  #elem = null;
   constructor() {
-    this.body = null;
-    this.title = null;
-    this.documentBody = document.querySelector("body");
-    this.elem = createElement(this.getTemplate);
+    this.#documentBody = document.querySelector("body");
+    this.#elem = createElement(this.getTemplate);
   }
 
   setTitle(title) {
-    this.elem.querySelector(".modal__title").innerHTML = title;
+    this.#elem.querySelector(".modal__title").innerHTML = title;
   }
 
   setBody(element) {
-    this.elem.querySelector(".modal__body").appendChild(element);
+    this.#elem.querySelector(".modal__body").appendChild(element);
   }
 
   open() {
-    this.documentBody.classList.add("is-modal-open");
-
-    this.documentBody.appendChild(this.elem);
+    this.#documentBody.classList.add("is-modal-open");
+    this.#documentBody.appendChild(this.#elem);
     this.#addlisteners();
   }
 
-  close() {
-    this.documentBody.classList.remove("is-modal-open");
-    if (this.documentBody.querySelector(".modal")) {
-      this.documentBody.querySelector(".modal").remove;
+  close = () =>{
+    if (this.#documentBody.querySelector(".modal")) {
+      this.#documentBody.classList.remove("is-modal-open");
+      this.#documentBody.querySelector(".modal").remove();
     }
-    
   }
 
   getTemplate = () => {
@@ -52,18 +50,13 @@ export default class Modal {
   };
 
   #addlisteners = () => {
-    const button = this.documentBody.querySelector(".modal__close");
+    const button = this.#documentBody.querySelector(".modal__close");
+    button.addEventListener("click", this.close);
 
-    button.addEventListener("click", () => {
-      this.documentBody.querySelector(".modal").remove();
-      this.documentBody.classList.remove("modal-open");
-    });
-
-    this.documentBody.addEventListener("keydown", (event) => {
+    this.#documentBody.addEventListener("keydown", (event) => {
       if (event.code === "Escape") {
-        this.documentBody.querySelector(".modal").remove();
-        this.documentBody.classList.remove("modal-open");
+        this.close()
       }
-    });
+    }, {once:true});
   };
 }

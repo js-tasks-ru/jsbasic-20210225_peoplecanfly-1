@@ -102,16 +102,17 @@ export default class RibbonMenu {
   }
 
   #dsipatchCustomerEvent = (event) => {
-    if (event.target.classList.contains("ribbon__item")) {
-      const ribbonItemId = event.target.dataset.id;
-
-      this.elem.dispatchEvent(
-        new CustomEvent("ribbon-select", {
-          detail: ribbonItemId,
-          bubbles: true,
-        })
-      );
+    if (!event.target.classList.contains("ribbon__item")) {
+      return
     }
+    
+    const ribbonItemId = event.target.dataset.id;
+    this.elem.dispatchEvent(
+      new CustomEvent("ribbon-select", {
+        detail: ribbonItemId,
+        bubbles: true,
+      })
+    );
   };
 
   #removeDefaulbehavior = () => {

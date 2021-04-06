@@ -22,9 +22,8 @@ export default class ProductGrid {
     </div>
     `;
   };
-
+  // render list of products ( name of function was pre-defined)
   #getProductList = (productList = this.products) => {
-    // инициализуруем элементы ( если не передавать значение то берется весь список продуктов)
     const tempElement = this.elem.querySelector(".products-grid__inner");
     tempElement.innerHTML = "";
     productList.forEach((item) => {
@@ -34,57 +33,56 @@ export default class ProductGrid {
   };
 
   updateFilter = (filters) => {
-    let key = Object.keys(filters)[0];
-    this.filters[key] = filters[key]; // update this.filters according input data
-
+    Object.assign(this.filters, filters);
+    // make a copy of this.products
     let productList = this.products.slice(0);
-
+    // call function in a row to make a final list of products 
     productList = this.#nutsCheck(productList);
     productList = this.#veganCheck(productList);
     productList = this.#spicyCheck(productList);
     productList = this.#categoryCheck(productList);
-    this.#getProductList(productList);
+    this.#getProductList(productList); // call function to render a final created list of products
   };
 
   #nutsCheck = (productList) => {
-    let tempMassive = productList.filter((item) => {
+    let tempArray = productList.filter((item) => {
       if (Boolean(!item.nuts) && this.filters.noNuts == true) {
         return item;
       } else if (this.filters.noNuts == false) {
         return item;
       }
     });
-    return tempMassive;
+    return tempArray;
   };
 
   #veganCheck = (productList) => {
-    let tempMassive = productList.filter((item) => {
+    let tempArray = productList.filter((item) => {
       if (item.vegeterian && this.filters.vegeterianOnly == true) {
         return item;
       } else if (this.filters.vegeterianOnly == false) {
         return item;
       }
     });
-    return tempMassive;
+    return tempArray;
   };
 
   #spicyCheck = (productList) => {
-    let tempMassive = productList.filter((item) => {
+    let tempArray = productList.filter((item) => {
       if (item.spiciness <= this.filters.maxSpiciness) {
         return item;
       }
     });
-    return tempMassive;
+    return tempArray;
   };
 
   #categoryCheck = (productList) => {
-    let tempMassive = productList.filter((item) => {
+    let tempArray = productList.filter((item) => {
       if (item.category == this.filters.category) {
         return item;
       } else if (this.filters.category == "") {
         return item;
       }
     });
-    return tempMassive;
+    return tempArray;
   };
 }

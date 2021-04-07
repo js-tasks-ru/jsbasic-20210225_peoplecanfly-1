@@ -11,6 +11,15 @@ export default class CartIcon {
     this.elem = createElement('<div class="cart-icon"></div>');
   }
 
+  #removeStyle() {
+    Object.assign(this.elem.style, {
+      position: "",
+      top: "",
+      left: "",
+      zIndex: "",
+    });
+  }
+
   update(cart) {
     if (!cart.isEmpty()) {
       this.elem.classList.add("cart-icon_visible");
@@ -22,9 +31,7 @@ export default class CartIcon {
             .getTotalPrice()
             .toFixed(2)}</span>
         </div>`;
-      this.#initialPos =
-        this.elem.getBoundingClientRect().top + window.pageYOffset;
-
+      this.updatePosition();
       this.elem.classList.add("shake");
       this.elem.addEventListener(
         "transitionend",
@@ -44,32 +51,38 @@ export default class CartIcon {
   }
 
   updatePosition() {
-    if (this.#initialPos > window.pageYOffset) {
-      this.elem.style.position = "absolute";
+    const isMobleWidth = document.documentElement.clientWidth <= 767;
+    const isScrolled = this.#initialPos > window.pageYOffset;
 
-      Object.assign(this.elem.style, {
-        position: "",
-        top: "",
-        left: "",
-        zIndex: "",
-      });
-    } else {
-
-      const paddingLeft =
-        document.querySelector(".container").getBoundingClientRect().right + 20;
-      const paddingRight =
-        document.documentElement.clientWidth - this.elem.offsetWidth - 10;
-      const leftIndent = Math.min(paddingLeft, paddingRight) + "px";
-
-      this.elem.style.position = "fixed";
-
-      Object.assign(this.elem.style, {
-        position: "fixed",
-        top: "50px",
-        zIndex: 1e3,
-        right: "10px",
-        left: leftIndent,
-      });
+    if (!this.#initialPos) {
+      this.#initialPos = this.elem.getBoundingClientRect().top + window.pageYOffset;
     }
+    if (isMobleWidth) {
+      this.#removeStyle();
+      return;
+    }
+    if (isScrolled) {
+      this.elem.style.position = "absolute";
+      this.#removeStyle();
+      return;
+    }
+
+    this.#setLeftIndentPadding();
+  }
+
+  #setLeftIndentPadding() {
+    const paddingLeft =
+      document.querySelector(".container").getBoundingClientRect().right + 20;
+    const paddingRight =
+      document.documentElement.clientWidth - this.elem.offsetWidth - 10;
+    const leftIndentPadding = Math.min(paddingLeft, paddingRight) + "px";
+
+    Object.assign(this.elem.style, {
+      position: "fixed",
+      top: "50px",
+      zIndex: 1e3,
+      right: "10px",
+      left: leftIndentPadding,
+    });
   }
 }

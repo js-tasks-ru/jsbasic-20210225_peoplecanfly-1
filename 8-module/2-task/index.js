@@ -10,8 +10,8 @@ export default class ProductGrid {
       maxSpiciness: 4, // числа от 0 до 4
       category: "",
     };
-    this.elem = createElement(this.#poductsWrapperTemplate());
-    this.#getProductList();
+    this.elem = createElement(this.#poductsWrapperTemplate()); 
+    this.#renderProductList();
   }
 
   #poductsWrapperTemplate = () => {
@@ -23,12 +23,12 @@ export default class ProductGrid {
     `;
   };
   // render list of products ( name of function was pre-defined)
-  #getProductList = (productList = this.products) => {
-    const tempElement = this.elem.querySelector(".products-grid__inner");
-    tempElement.innerHTML = "";
+  #renderProductList = (productList = this.products) => {
+    const productsWrapper = this.elem.querySelector(".products-grid__inner");
+    productsWrapper.innerHTML = "";
     productList.forEach((item) => {
       const product = new ProductCard(item);
-      tempElement.append(product.elem);
+      productsWrapper.append(product.elem);
     });
   };
 
@@ -36,52 +36,38 @@ export default class ProductGrid {
     Object.assign(this.filters, filters);
     // make a copy of this.products
     let productList = this.products.slice(0);
-    // call function in a row to make a final list of products 
+    // call function in a row to make a final list of products
     productList = this.#nutsCheck(productList);
     productList = this.#veganCheck(productList);
     productList = this.#spicyCheck(productList);
     productList = this.#categoryCheck(productList);
-    this.#getProductList(productList); // call function to render a final created list of products
+    this.#renderProductList(productList); // call function to render a final created list of products
   };
 
   #nutsCheck = (productList) => {
     let tempArray = productList.filter((item) => {
-      if (Boolean(!item.nuts) && this.filters.noNuts == true) {
-        return item;
-      } else if (this.filters.noNuts == false) {
-        return item;
-      }
+       return this.filters.noNuts == true ? !item.nuts : true
     });
     return tempArray;
   };
 
   #veganCheck = (productList) => {
     let tempArray = productList.filter((item) => {
-      if (item.vegeterian && this.filters.vegeterianOnly == true) {
-        return item;
-      } else if (this.filters.vegeterianOnly == false) {
-        return item;
-      }
+      return this.filters.vegeterianOnly ? item.vegeterian : true;
     });
     return tempArray;
   };
 
   #spicyCheck = (productList) => {
     let tempArray = productList.filter((item) => {
-      if (item.spiciness <= this.filters.maxSpiciness) {
-        return item;
-      }
+      return this.filters.maxSpiciness ? item.spiciness <= this.filters.maxSpiciness : true
     });
     return tempArray;
   };
 
   #categoryCheck = (productList) => {
     let tempArray = productList.filter((item) => {
-      if (item.category == this.filters.category) {
-        return item;
-      } else if (this.filters.category == "") {
-        return item;
-      }
+      return this.filters.category ? item.category == this.filters.category : true
     });
     return tempArray;
   };

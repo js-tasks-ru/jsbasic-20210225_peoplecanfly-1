@@ -15,15 +15,14 @@ export default class Cart {
     );
 
     // if there is a same element increase q-ty + 1
-    // else add full productObject object to array.
+    
     if (cartItem) {
       cartItem.count++;
-      this.onProductUpdate(cartItem); //call function
+      this.onProductUpdate(cartItem); //call function to add item 
     } else {
       this.cartItems.push(productObject);
       this.onProductUpdate(productObject);
     }
-    console.log(this.cartItems)
   }
 
   updateProductCount(productId, amount) {
@@ -31,12 +30,12 @@ export default class Cart {
     const cartItem = this.cartItems.find(
       (item) => item.product.id == productId
     );
-    // if >= 1  + or - 1 element
+
     if (cartItem.count >= 1) {
       cartItem.count += amount;
       this.onProductUpdate(cartItem);
     }
-    //  if last element delete object from array
+    //  if q-ty of object is 0 - delete obj from array
     if (cartItem.count <= 0) {
       const idOfElementToDelete = this.cartItems.indexOf(cartItem);
       this.cartItems.splice(idOfElementToDelete, 1);
@@ -50,8 +49,7 @@ export default class Cart {
   getTotalCount() {
     return this.cartItems.reduce((previousValue, currentItem) => {
        return previousValue + currentItem.count;
-    }, 0);
-    
+    }, 0); 
   }
 
   getTotalPrice() {

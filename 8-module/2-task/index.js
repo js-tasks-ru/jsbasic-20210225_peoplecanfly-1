@@ -52,23 +52,21 @@ export default class ProductGrid {
   };
 
   #veganCheck = (productList) => {
-    let tempArray = productList.filter((item) => {
+    return productList.filter((item) => {
       return this.filters.vegeterianOnly ? item.vegeterian : true;
     });
-    return tempArray;
+    
   };
 
   #spicyCheck = (productList) => {
-    let tempArray = productList.filter((item) => {
+    return productList.filter((item) => {
       return this.filters.maxSpiciness ? item.spiciness <= this.filters.maxSpiciness : true
     });
-    return tempArray;
   };
 
   #categoryCheck = (productList) => {
-    let tempArray = productList.filter((item) => {
+    return productList.filter((item) => {
       return this.filters.category ? item.category == this.filters.category : true
     });
-    return tempArray;
   };
 }

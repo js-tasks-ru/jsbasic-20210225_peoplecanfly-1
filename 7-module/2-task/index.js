@@ -13,6 +13,7 @@ export default class Modal {
   }
 
   setBody(element) {
+    this.#elem.querySelector(".modal__body").innerHTML = ''
     this.#elem.querySelector(".modal__body").appendChild(element);
   }
 

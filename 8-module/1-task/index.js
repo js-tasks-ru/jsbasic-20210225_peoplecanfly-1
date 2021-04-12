@@ -62,7 +62,6 @@ export default class CartIcon {
       return;
     }
     if (isScrolled) {
-      this.elem.style.position = "absolute";
       this.#removeStyle();
       return;
     }

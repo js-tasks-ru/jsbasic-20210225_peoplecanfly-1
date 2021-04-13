@@ -118,11 +118,11 @@ export default class Cart {
 
   renderModal() {
     this.#modal.setTitle("Your order");
-    this.#modal.setBody(this.#createBasketTemplate());
+    this.#modal.setBody(this.#createBasketElement());
     this.#modal.open();
   }
 
-  #createBasketTemplate = () => {
+  #createBasketElement = () => {
     this.#basket = createElement("<div></div>");
     this.cartItems.forEach((item) => {
       this.#basket.appendChild(this.renderProduct(item.product, item.count));
@@ -133,10 +133,10 @@ export default class Cart {
   };
 
   #addButtonlisteners = () => {
-    this.#basket.addEventListener("click", this.#qtyChange); // qty change in a basket 
+    this.#basket.addEventListener("click", this.#qtyChange); // qty change in a basket
     this.#basket
       .querySelector(".cart-form")
-      .addEventListener("submit", this.onSubmit); // submitting order
+      .addEventListener("submit", this.onSubmit.bind(this)); // binding this due to async function declaration
   };
 
   #qtyChange = (event) => {
@@ -170,7 +170,7 @@ export default class Cart {
 
     const productId = cartItem.product.id;
 
-    // remove product HTML from basket 
+    // remove product HTML from basket
     if (cartItem.count == 0) {
       this.#basket.querySelector(`[data-product-id="${productId}"]`).remove();
       return;
@@ -188,42 +188,49 @@ export default class Cart {
     );
     const infoPrice = this.#basket.querySelector(`.cart-buttons__info-price`);
 
-    productCount.innerHTML = cartItem.count;
-    productPrice.innerHTML = `€${(
+    productCount.innerText = cartItem.count;
+    productPrice.innerText = `€${(
       cartItem.count * cartItem.product.price
     ).toFixed(2)}`;
-    infoPrice.innerHTML = `€${this.getTotalPrice().toFixed(2)}`;
+    infoPrice.innerText = `€${this.getTotalPrice().toFixed(2)}`;
   };
 
-  onSubmit = (event) => {
+  async onSubmit(event) {
     event.preventDefault();
     this.#basket
       .querySelector('button[type="submit"]')
       .classList.add("is-loading");
+
+      
     let formData = new FormData(this.#basket.querySelector(".cart-form"));
-    let responsePromise = fetch("https://httpbin.org/post", {
-      method: "POST",
-      body: formData,
-    });
 
+    try {
+      const responce = await fetch("https://httpbin.org/post", {
+        method: "POST",
+        body: formData,
+      });
 
-    responsePromise.then((repsponce) => {
-      if (repsponce.ok){
+      if (responce.ok) {
         this.cartItems = [];
         this.#basketChangeOnSucsessSubmit();
       }
-    });
+    } catch (e){
+      console.log('server error:', e)
+    }
   };
 
   #basketChangeOnSucsessSubmit = () => {
-   document.querySelector(".modal__title").innerHTML = "Success!";
-   document.querySelector(".modal__body").innerHTML = `
-   <div class="modal__body-inner">
-      <p>Order successful! Your order is being cooked :) 
-      <br>We’ll notify you about delivery time shortly.<br>
-      <img src="/assets/images/delivery.gif">
-      </p>
-   </div>`;
+    this.#modal.setTitle("Success!");
+    this.#modal.setBody(
+      createElement(`
+      <div class="modal__body-inner">
+        <p>Order successful! Your order is being cooked :) 
+        <br>We’ll notify you about delivery time shortly.<br>
+        <img src="/assets/images/delivery.gif">
+        </p>
+      </div>`
+      )
+    )
   };
 
   addEventListeners() {

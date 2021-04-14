@@ -136,7 +136,7 @@ export default class Cart {
     this.#basket.addEventListener("click", this.#qtyChange); // qty change in a basket
     this.#basket
       .querySelector(".cart-form")
-      .addEventListener("submit", this.onSubmit.bind(this)); // binding this due to async function declaration
+      .addEventListener("submit", this.onSubmit); // binding this due to async function declaration
   };
 
   #qtyChange = (event) => {
@@ -195,7 +195,7 @@ export default class Cart {
     infoPrice.innerText = `€${this.getTotalPrice().toFixed(2)}`;
   };
 
-  async onSubmit(event) {
+  onSubmit = async(event)=> {
     event.preventDefault();
     this.#basket
       .querySelector('button[type="submit"]')

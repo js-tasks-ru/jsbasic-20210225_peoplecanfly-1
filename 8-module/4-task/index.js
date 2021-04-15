@@ -234,6 +234,7 @@ export default class Cart {
       </div>`
       )
     )
+    this.cartIcon.update(this)
   };
 
   addEventListeners() {

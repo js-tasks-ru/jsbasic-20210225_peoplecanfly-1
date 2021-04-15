@@ -52,11 +52,9 @@ export default class CartIcon {
 
   updatePosition() {
     const isMobleWidth = document.documentElement.clientWidth <= 767;
+    this.#initialPos = 1;
     const isScrolled = this.#initialPos > window.pageYOffset;
 
-    if (!this.#initialPos) {
-      this.#initialPos = this.elem.getBoundingClientRect().top + window.pageYOffset;
-    }
     if (isMobleWidth) {
       this.#removeStyle();
       return;

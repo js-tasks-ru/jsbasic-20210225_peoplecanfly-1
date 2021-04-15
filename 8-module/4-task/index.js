@@ -68,6 +68,7 @@ export default class Cart {
   }
 
   renderProduct(product, count) {
+    console.log(count)
     return createElement(`
     <div class="cart-product" data-product-id="${product.id}">
       <div class="cart-product__img">
@@ -85,7 +86,7 @@ export default class Cart {
               <img src="/assets/images/icons/square-plus-icon.svg" alt="plus">
             </button>
           </div>
-          <div class="cart-product__price">€${product.price.toFixed(2)}</div>
+          <div class="cart-product__price">€${(count * product.price).toFixed(2)}</div>
         </div>
       </div>
     </div>`);
@@ -124,7 +125,9 @@ export default class Cart {
 
   #createBasketElement = () => {
     this.#basket = createElement("<div></div>");
+    
     this.cartItems.forEach((item) => {
+      
       this.#basket.appendChild(this.renderProduct(item.product, item.count));
     });
     this.#basket.appendChild(this.renderOrderForm());

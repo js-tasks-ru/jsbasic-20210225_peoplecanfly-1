@@ -84,7 +84,7 @@ export default class Carousel {
   #dsipatchCustomerEvent = (event) => {
     if (event.target.closest(".carousel__button")) {
       const slideId = event.target.closest(".carousel__slide").dataset.id;
-
+      
       this.elem.dispatchEvent(
         new CustomEvent("product-add", {
           detail: slideId,

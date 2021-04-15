@@ -59,8 +59,9 @@ export default class ProductGrid {
   };
 
   #spicyCheck = (productList) => {
+    
     return productList.filter((item) => {
-      return this.filters.maxSpiciness ? item.spiciness <= this.filters.maxSpiciness : true
+      return item.spiciness <= this.filters.maxSpiciness ? true : false;
     });
   };
 

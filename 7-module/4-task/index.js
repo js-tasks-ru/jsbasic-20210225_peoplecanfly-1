@@ -30,6 +30,10 @@ export default class StepSlider {
   </div>`;
   }
 
+  getPosition(){
+    return this.#selectorPosition
+  }
+
   #stepQty(steps) {
     const span = "<span></span>";
     return span.repeat(steps);
@@ -74,8 +78,10 @@ export default class StepSlider {
 
     thumb.addEventListener("pointerdown", () => {
       document.addEventListener("pointermove", this.#onPointerMove);
+
+      document.addEventListener("pointerup", this.#onPointerUp,{once:true});
     });
-    document.addEventListener("pointerup", this.#onPointerUp);
+    
   };
 
   #onPointerMove = (event) => {
@@ -104,14 +110,23 @@ export default class StepSlider {
   };
 
   #onPointerUp = () => {
+    this.#defineNewPosition(event)
     this.#dispatchEventData();
-
-    document.removeEventListener("pointermove", this.#onPointerMove, {once: true,});
+    document.removeEventListener("pointermove", this.#onPointerMove, {
+      once: true,
+    });
   };
 
   #defineNewPosition = (event) => {
     const leftPos = event.clientX - this.elem.getBoundingClientRect().left;
-    const relativePos = leftPos / this.elem.offsetWidth;
+    let relativePos = leftPos / this.elem.offsetWidth;
+    
+    if (relativePos < 0){
+      relativePos = 0
+    }else if(relativePos > 1 ){
+      relativePos = 1
+    }
+
     const segments = this.#steps - 1;
     const segmentPos = relativePos * segments;
     this.#selectorPosition = Math.round(segmentPos);

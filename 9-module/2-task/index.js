@@ -44,27 +44,22 @@ export default class Main {
       .querySelector("[data-products-grid-holder]")
       .append(this.productsGrid.elem);
 
-    this.productsGrid.updateFilter({
-      noNuts: document.getElementById("nuts-checkbox").checked,
-      vegeterianOnly: document.getElementById("vegeterian-checkbox").checked,
-      maxSpiciness: this.stepSlider.value,
-      category: this.ribbonMenu.value,
-    });
 
+    this.#setBaseFilters()
     this.#addListeners();
   }
 
   #addListeners = () => {
     //add product 
-    document.body.addEventListener('product-add', (event)=>{
-      const product = this.products.find(item =>{
-        return item.id == event.detail
-      })
-      this.cart.addProduct(product)
-    })
+    document.body.addEventListener("product-add", (event) => {
+      const product = this.products.find((item) => {
+        return item.id == event.detail;
+      });
+      this.cart.addProduct(product);
+    });
 
-    //slider spicy change
-    document.body.addEventListener("slider-change", (event)=>{
+    // slider spicy change
+    this.stepSlider.elem.addEventListener("slider-change", (event)=>{
       this.productsGrid.updateFilter({
         maxSpiciness: event.detail
       })
@@ -88,5 +83,14 @@ export default class Main {
       this.productsGrid.updateFilter({ vegeterianOnly: vegCheckBox.checked });
     })
   };
+
+  #setBaseFilters = ()=>{
+    this.productsGrid.updateFilter({
+      noNuts: document.getElementById("nuts-checkbox").checked,
+      vegeterianOnly: document.getElementById("vegeterian-checkbox").checked,
+      maxSpiciness: this.stepSlider.getPosition(),
+      category: ''
+    });
+  }
 
 }
